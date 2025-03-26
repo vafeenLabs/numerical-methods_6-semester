@@ -65,14 +65,14 @@ private:
             for (int i = row + 1; i < n; ++i) {
                 res[row] -= a[row][i] * res[i];
             }
-            /*
-            if (fmod(res[row], 1.0) < EPS)
-            {
-                cout << fmod(res[row], 1.0) << " ";
-                res[row] = trunc(res[row]);
+            // не помню зачем тут закомменчено было, но лучше попробовать и так и так 
+            // if (fmod(res[row], 1.0) < EPS)
+            // {
+            //     cout << fmod(res[row], 1.0) << " ";
+            //     res[row] = trunc(res[row]);
                 
-            }
-            */
+            // }
+            
         }
         return res;
     }
