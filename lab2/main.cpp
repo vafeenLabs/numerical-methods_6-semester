@@ -1,4 +1,4 @@
-#include "Calculate.h"
+#include "main.hpp"
 
 int main()
 {
@@ -8,17 +8,19 @@ int main()
         cout << "1) Ввести данные с файла\n2) Выход" << endl;
         int choice;
         cin >> choice;
-        if (choice == 2) break;
+        if (choice == 2)
+            break;
         if (choice == 1)
         {
             cout << "\nВведите название входного файла: ";
             string inputPath;
             cin >> inputPath;
 
-            Koshi koshi;
+            System koshi;
             koshi.InputFromFile(inputPath + ".txt");
             int result = Calculate(koshi);
-            cout << "IER: " << result << endl << endl;
+            cout << "IER: " << result << endl
+                 << endl;
         }
         else
         {
