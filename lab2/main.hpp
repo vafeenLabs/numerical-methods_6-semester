@@ -121,6 +121,7 @@ int Calculate(System &koshi)
             koshi.dotsCount++;
             if (koshi.h == koshi.hMin)
                 koshi.minDotsCount++;
+                // 2**S, s - порядок метода
             if (diff < (koshi.eps / 4.0))
                 koshi.h = min(fabs(koshi.h * 2), fabs(bound - x));
         }
