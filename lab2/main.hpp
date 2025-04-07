@@ -15,7 +15,7 @@ public:
     double k1, k2;
     int dotsCount = 0, badDotsCount = 0, minDotsCount = 1, sign;
 
-    void InputFromFile(const string &path)
+    void readData(const string &path)
     {
         ifstream inputFile(path);
         if (!inputFile)
@@ -30,39 +30,39 @@ public:
         h = fabs(B - A) / 10;
     }
 
-    static double func_calc(double x, double y)
+    static double func(double x, double y)
     {
         return 2 * x;
     }
 
-    double rungeKuttaStep(double x, double y0, double h)
+    double rkstep(double x, double y0, double h)
     {
-        k1 = h * func_calc(x, y0);
-        k2 = h * func_calc(x + h / 2, y0 + k1 / 2);
+        k1 = h * func(x, y0);
+        k2 = h * func(x + h / 2, y0 + k1 / 2);
         return y0 + k2;
     }
 
-    double FindDiff(double x, double y0)
+    double diff(double x, double y0)
     {
         double step = h * sign;
-        double y_h1 = rungeKuttaStep(x, y0, step);
+        double y_h1 = rkstep(x, y0, step);
 
-        double y_h21 = rungeKuttaStep(x, y0, step / 2);
-        double y_h22 = rungeKuttaStep(x + step / 2, y_h21, step / 2);
+        double y_h21 = rkstep(x, y0, step / 2);
+        double y_h22 = rkstep(x + step / 2, y_h21, step / 2);
         return fabs(y_h1 - y_h22) / 3.0;
     }
 
-    void PrintInfo(double x)
+    void print(double x)
     {
         cout << "X: " << x << " Y: " << y << endl;
     }
 
-    void PrintStep(double x)
+    void printStep(double x)
     {
-        cout << "h: " << sign * h << ";  X: " << x << "  Y: " << y << "  E: " << FindDiff(x, y) << endl;
+        cout << "h: " << sign * h << ";  X: " << x << "  Y: " << y << "  E: " << diff(x, y) << endl;
     }
 
-    void PrintPointsStats()
+    void printPointIntfo()
     {
         cout << "\nЧисло точек интегрирования: " << dotsCount << "\nТочность не достигается в "
              << badDotsCount << " точк.\nМинимальное число шагов интегрирования: " << minDotsCount << endl;
@@ -70,20 +70,20 @@ public:
 };
 
 
-int Calculate(System &koshi)
+int Calculate(System &system)
 {
     double x, bound, y_new, diff;
-    if (koshi.C == koshi.A)
+    if (system.C == system.A)
     {
-        koshi.sign = 1;
-        x = koshi.A;
-        bound = koshi.B;
+        system.sign = 1;
+        x = system.A;
+        bound = system.B;
     }
-    else if (koshi.C == koshi.B)
+    else if (system.C == system.B)
     {
-        koshi.sign = -1;
-        x = koshi.B;
-        bound = koshi.A;
+        system.sign = -1;
+        x = system.B;
+        bound = system.A;
     }
     else
     {
@@ -91,74 +91,74 @@ int Calculate(System &koshi)
         return 2;
     }
 
-    koshi.PrintInfo(x);
-    while (fabs(bound - (x + koshi.h)) >= koshi.hMin && (koshi.sign == 1 ? bound > (x + koshi.h) : bound < (x - koshi.h)))
+    system.print(x);
+    while (fabs(bound - (x + system.h)) >= system.hMin && (system.sign == 1 ? bound > (x + system.h) : bound < (x - system.h)))
     {
-        y_new = koshi.rungeKuttaStep(x, koshi.y, koshi.h * koshi.sign);
-        diff = koshi.FindDiff(x, koshi.y);
+        y_new = system.rkstep(x, system.y, system.h * system.sign);
+        diff = system.diff(x, system.y);
 
-        if (diff > koshi.eps)
+        if (diff > system.eps)
         {
-            if (koshi.h == koshi.hMin)
+            if (system.h == system.hMin)
             {
-                koshi.y = y_new;
-                x += koshi.h * koshi.sign;
-                koshi.PrintStep(x);
-                koshi.dotsCount++;
-                koshi.badDotsCount++;
-                koshi.minDotsCount++;
+                system.y = y_new;
+                x += system.h * system.sign;
+                system.printStep(x);
+                system.dotsCount++;
+                system.badDotsCount++;
+                system.minDotsCount++;
             }
             else
             {
-                koshi.h = max(koshi.h / 2, koshi.hMin);
+                system.h = max(system.h / 2, system.hMin);
             }
         }
         else
         {
-            koshi.y = y_new;
-            x += koshi.h * koshi.sign;
-            koshi.PrintStep(x);
-            koshi.dotsCount++;
-            if (koshi.h == koshi.hMin)
-                koshi.minDotsCount++;
+            system.y = y_new;
+            x += system.h * system.sign;
+            system.printStep(x);
+            system.dotsCount++;
+            if (system.h == system.hMin)
+                system.minDotsCount++;
                 // 2**S, s - порядок метода
-            if (diff < (koshi.eps / 4.0))
-                koshi.h = min(fabs(koshi.h * 2), fabs(bound - x));
+            if (diff < (system.eps / 4.0))
+                system.h = min(fabs(system.h * 2), fabs(bound - x));
         }
     }
 
     // cout << "end\n";
 
-    if (fabs(bound - x) >= 2 * koshi.hMin)
+    if (fabs(bound - x) >= 2 * system.hMin)
     {
-        koshi.minDotsCount += 2;
-        koshi.dotsCount += 2;
+        system.minDotsCount += 2;
+        system.dotsCount += 2;
 
         // 1-st
-        koshi.h = fabs(bound - x) - koshi.hMin;
-        y_new = koshi.rungeKuttaStep(x, koshi.y, koshi.h * koshi.sign);
-        diff = koshi.FindDiff(x, koshi.y);
+        system.h = fabs(bound - x) - system.hMin;
+        y_new = system.rkstep(x, system.y, system.h * system.sign);
+        diff = system.diff(x, system.y);
 
-        if (diff > koshi.eps)
-            koshi.badDotsCount++;
+        if (diff > system.eps)
+            system.badDotsCount++;
 
-        koshi.y = y_new;
-        x += koshi.sign * koshi.h;
-        koshi.PrintStep(x);
+        system.y = y_new;
+        x += system.sign * system.h;
+        system.printStep(x);
 
         // 2-nd
-        koshi.h = koshi.hMin;
-        y_new = koshi.rungeKuttaStep(x, koshi.y, koshi.h * koshi.sign);
-        diff = koshi.FindDiff(x, koshi.y);
-        koshi.y = y_new;
+        system.h = system.hMin;
+        y_new = system.rkstep(x, system.y, system.h * system.sign);
+        diff = system.diff(x, system.y);
+        system.y = y_new;
         x = bound;
-        koshi.PrintStep(x);
-        if (diff > koshi.eps)
-            koshi.badDotsCount++;
+        system.printStep(x);
+        if (diff > system.eps)
+            system.badDotsCount++;
 
-        koshi.PrintPointsStats();
+        system.printPointIntfo();
 
-        if (koshi.badDotsCount != 0)
+        if (system.badDotsCount != 0)
         {
             return 1;
         }
@@ -167,23 +167,23 @@ int Calculate(System &koshi)
             return 0;
         }
     }
-    else if (fabs(bound - x) <= 1.5 * koshi.hMin)
+    else if (fabs(bound - x) <= 1.5 * system.hMin)
     {
-        koshi.h = fabs(bound - x);
-        y_new = koshi.rungeKuttaStep(x, koshi.y, koshi.h * koshi.sign);
-        diff = koshi.FindDiff(x, koshi.y);
+        system.h = fabs(bound - x);
+        y_new = system.rkstep(x, system.y, system.h * system.sign);
+        diff = system.diff(x, system.y);
 
-        koshi.dotsCount++;
-        koshi.minDotsCount++;
-        if (diff > koshi.eps)
-            koshi.badDotsCount++;
+        system.dotsCount++;
+        system.minDotsCount++;
+        if (diff > system.eps)
+            system.badDotsCount++;
 
-        x += koshi.sign * koshi.h;
-        koshi.y = y_new;
-        koshi.PrintStep(x);
-        koshi.PrintPointsStats();
+        x += system.sign * system.h;
+        system.y = y_new;
+        system.printStep(x);
+        system.printPointIntfo();
 
-        if (koshi.badDotsCount != 0)
+        if (system.badDotsCount != 0)
         {
             return 1;
         }
@@ -194,33 +194,33 @@ int Calculate(System &koshi)
     }
     else
     {
-        koshi.minDotsCount += 2;
-        koshi.dotsCount += 2;
+        system.minDotsCount += 2;
+        system.dotsCount += 2;
 
         // 1-st
-        koshi.h = fabs(bound - x) / 2;
-        y_new = koshi.rungeKuttaStep(x, koshi.y, koshi.h * koshi.sign);
-        diff = koshi.FindDiff(x, koshi.y);
+        system.h = fabs(bound - x) / 2;
+        y_new = system.rkstep(x, system.y, system.h * system.sign);
+        diff = system.diff(x, system.y);
 
-        if (diff > koshi.eps)
-            koshi.badDotsCount++;
+        if (diff > system.eps)
+            system.badDotsCount++;
 
-        koshi.y = y_new;
-        x += koshi.h;
-        koshi.PrintStep(x);
+        system.y = y_new;
+        x += system.h;
+        system.printStep(x);
 
         // 2-nd
-        y_new = koshi.rungeKuttaStep(x, koshi.y, koshi.h * koshi.sign);
-        diff = koshi.FindDiff(x, koshi.y);
-        koshi.y = y_new;
+        y_new = system.rkstep(x, system.y, system.h * system.sign);
+        diff = system.diff(x, system.y);
+        system.y = y_new;
         x = bound;
-        koshi.PrintStep(x);
-        if (diff > koshi.eps)
-            koshi.badDotsCount++;
+        system.printStep(x);
+        if (diff > system.eps)
+            system.badDotsCount++;
 
-        koshi.PrintPointsStats();
+        system.printPointIntfo();
 
-        if (koshi.badDotsCount != 0)
+        if (system.badDotsCount != 0)
         {
             return 1;
         }

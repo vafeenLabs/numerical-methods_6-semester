@@ -16,9 +16,9 @@ int main()
             string inputPath;
             cin >> inputPath;
 
-            System koshi;
-            koshi.InputFromFile(inputPath + ".txt");
-            int result = Calculate(koshi);
+            System system;
+            system.readData(inputPath + ".txt");
+            int result = Calculate(system);
             cout << "IER: " << result << endl
                  << endl;
         }
