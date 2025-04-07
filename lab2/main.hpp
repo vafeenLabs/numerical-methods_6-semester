@@ -32,7 +32,7 @@ public:
 
     static double func(double x, double y)
     {
-        return 2 * x;
+        return 2 * x + y - x * x;
     }
 
     double rkstep(double x, double y0, double h)
@@ -215,8 +215,9 @@ int Calculate(System &system)
         x = bound;
         system.printStep(x);
         if (diff > system.eps)
+        {
             system.badDotsCount++;
-
+        }
         system.printPointIntfo();
 
         if (system.badDotsCount != 0)
@@ -228,5 +229,6 @@ int Calculate(System &system)
             return 0;
         }
     }
+    system.printPointIntfo();
     return 0;
 };
