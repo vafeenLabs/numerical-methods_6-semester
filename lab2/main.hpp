@@ -45,11 +45,10 @@ public:
     double diff(double x, double y0)
     {
         double step = h * sign;
-        double y_h1 = rkstep(x, y0, step);
-
-        double y_h21 = rkstep(x, y0, step / 2);
-        double y_h22 = rkstep(x + step / 2, y_h21, step / 2);
-        return fabs(y_h1 - y_h22) / 3.0;
+        double y1 = rkstep(x, y, step);
+        double y0_5 = rkstep(x, y, step / 2);
+        double y0_5_1 = rkstep(x + step / 2, y0_5, step / 2);
+        return fabs(y0_5_1 - y1) / 3.0;
     }
 
     void print(double x)
@@ -68,7 +67,6 @@ public:
              << badDotsCount << " точк.\nМинимальное число шагов интегрирования: " << minDotsCount << endl;
     }
 };
-
 
 int Calculate(System &system)
 {
@@ -121,7 +119,7 @@ int Calculate(System &system)
             system.dotsCount++;
             if (system.h == system.hMin)
                 system.minDotsCount++;
-                // 2**S, s - порядок метода
+            // 2**S, s - порядок метода
             if (diff < (system.eps / 4.0))
                 system.h = min(fabs(system.h * 2), fabs(bound - x));
         }
@@ -143,7 +141,8 @@ int Calculate(System &system)
             system.badDotsCount++;
 
         system.y = y_new;
-        x += system.sign * system.h;
+        // x += system.sign * system.h;
+        x = bound - system.h;
         system.printStep(x);
 
         // 2-nd
@@ -167,7 +166,7 @@ int Calculate(System &system)
             return 0;
         }
     }
-    else if (fabs(bound - x) <= 1.5 * system.hMin)
+    else if (fabs(bound - x) <= 1.5 * system.hMin && fabs(bound - x) > 10e-5)
     {
         system.h = fabs(bound - x);
         y_new = system.rkstep(x, system.y, system.h * system.sign);
@@ -177,8 +176,8 @@ int Calculate(System &system)
         system.minDotsCount++;
         if (diff > system.eps)
             system.badDotsCount++;
-
-        x += system.sign * system.h;
+        cout << "x:" << x << ",bound:" << bound << ",fabs(bound - x):" << fabs(bound - x) << '\n';
+        x = bound;
         system.y = y_new;
         system.printStep(x);
         system.printPointIntfo();
@@ -192,7 +191,7 @@ int Calculate(System &system)
             return 0;
         }
     }
-    else
+    else if (fabs(bound - x) > 10e-5)
     {
         system.minDotsCount += 2;
         system.dotsCount += 2;
@@ -229,4 +228,5 @@ int Calculate(System &system)
             return 0;
         }
     }
-}
+    return 0;
+};
