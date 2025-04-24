@@ -27,8 +27,8 @@ public:
 
     static double Px(double x)
     {
-        return 0;
-        //return -1;
+        return -1;
+        // return 0;
     }
 
     static double Qx(double x)
@@ -38,8 +38,9 @@ public:
 
     static double Fx(double x)
     {
-        return 6 * x;
-        //return 0;
+        return 0;
+        // return 6 * x;
+
     }
 
     static double UderivRight(double x, double u, double v)
@@ -123,9 +124,9 @@ public:
         double kw5 = h * WderivRight(x + 2.0 * h / 3.0, u0 + 7.0 * ku1 / 27.0 + 10.0 * ku2 / 27.0 + ku4 / 27.0);
 
         // k6
-        double ku6 = h * UderivRight(x + h / 5.0, u0 - (28.0 * ku1 - 125.0 * ku2 + 546.0 * ku3 + 54.0 * ku4 + 378.0 * ku5) / 625.0, v0 - (28.0 * kv1 - 125.0 * kv2 + 546.0 * kv3 + 54.0 * kv4 + 378.0 * kv5) / 625.0);
-        double kv6 = h * VderivRight(x + h / 5.0, u0 - (28.0 * ku1 - 125.0 * ku2 + 546.0 * ku3 + 54.0 * ku4 + 378.0 * ku5) / 625.0);
-        double kw6 = h * WderivRight(x + h / 5.0, u0 - (28.0 * ku1 - 125.0 * ku2 + 546.0 * ku3 + 54.0 * ku4 + 378.0 * ku5) / 625.0);
+        double ku6 = h * UderivRight(x + h / 5.0, u0 + (28.0 * ku1 - 125.0 * ku2 + 546.0 * ku3 + 54.0 * ku4 - 378.0 * ku5) / 625.0, v0 + (28.0 * kv1 - 125.0 * kv2 + 546.0 * kv3 + 54.0 * kv4 - 378.0 * kv5) / 625.0);
+        double kv6 = h * VderivRight(x + h / 5.0, u0 + (28.0 * ku1 - 125.0 * ku2 + 546.0 * ku3 + 54.0 * ku4 - 378.0 * ku5) / 625.0);
+        double kw6 = h * WderivRight(x + h / 5.0, u0 + (28.0 * ku1 - 125.0 * ku2 + 546.0 * ku3 + 54.0 * ku4 - 378.0 * ku5) / 625.0);
 
         // Обновляем переменные
         u += (14.0 * ku1 + 35.0 * ku4 + 162.0 * ku5 + 125.0 * ku6) / 336.0;

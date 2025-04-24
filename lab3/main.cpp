@@ -1,5 +1,5 @@
 #include "System.h"
-#include".vscode/user/Source.h"
+#include"Source.h"
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -10,14 +10,14 @@ using namespace std;
 int main()
 {
     setlocale(LC_ALL, "rus");
-    while (true)
-    {
-        cout << "1) Ввести данные с файла\n2) Выход\n\n";
-        int choice;
-        cin >> choice;
+    // while (true)
+    // {
+        // cout << "1) Ввести данные с файла\n2) Выход\n\n";
+        // int choice;
+        // cin >> choice;
 
-        if (choice == 1)
-        {
+        // if (choice == 1)
+        // {
             cout << "\nВведите название входного файла: ";
             string path;
             cin >> path;
@@ -28,16 +28,17 @@ int main()
 
             system.CalculateSystem();
             CoutAllInformationAboutSystem(system);
-        }
-        else if (choice == 2)
-        {
-            break;
-        }
-        else
-        {
-            cout << "Invalid input\n";
-            return 0;
-        }
-    }
+            
+        // }
+        // else if (choice == 2)
+        // {
+        //     // break;
+        // }
+        // else
+        // {
+        //     cout << "Invalid input\n";
+        //     return 0;
+        // }
+    // }
     return 0;
 }
